@@ -29,6 +29,17 @@ total1<- total1%>% mutate(date = as.Date.character(total1$OccurDate, format = "%
 month = months(Date)
 
 
+#create a seasons variable
+total1 =total1%>%
+  mutate(
+    season = case_when(
+      month %in% 10:12 ~ "Fall",
+      month %in%  1:3  ~ "Winter",
+      month %in%  4:6  ~ "Spring",
+      TRUE ~ "Summer"))
+
+ggplot(aes(x=))
+
 
 
 ```
