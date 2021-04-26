@@ -13,22 +13,36 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(pacman)
 p_load(readr, tidyverse)
+library(ggmap)
+library(devtools)
 
 crime2021 = read_csv("CrimeData-2021.csv")
 
 
 crime2020 = read_csv("CrimeData-2020.csv")
 
+##bind the data
 total1 = rbind(crime2021,crime2020)
 
-total1 = total1%>% as.Date(OccurDate, ymd)
+##turn date from character into date format
+total1 = total1%>% mutate(date = as.Date(OccurDate, format =  "%m/%d/%Y"))
 
 
 total1<- total1%>% mutate(date = as.Date.character(total1$OccurDate, format = "%m/%d/%Y")) 
 
-month = months(Date)
 
 
+
+#add a months column
+total1 = total1%>%mutate(month = months(date))
+
+##turn month into a name
+total1 = total1%>%mutate(month = match(total1$month, month.name))
+
+
+
+                         
+                         
 #create a seasons variable
 total1 =total1%>%
   mutate(
@@ -39,6 +53,33 @@ total1 =total1%>%
       TRUE ~ "Summer"))
 
 ggplot(aes(x=))
+
+
+total1%>%ggplot(aes(x=OffenseCategory))+geom_bar()
+
+total1%>%filter(OffenseCategory =="Assault Offenses")%>%ggplot(aes(x=season))+geom_bar()
+
+##register the google key
+register_google(key = "AIzaSyC1NOad5gjBYnTG_vOiV8XmmuMJpJ51W48")
+
+##acquire map of boston from google
+portlandmap= get_googlemap("portland oregon", zoom = 14) %>% ggmap()
+
+##graph aggravated assaults by location in Boston
+CrimeMap = portland +geom_point(aes(x = Long, y = Lat, colour = season, size= HOUR), data=assault_data)+ggtitle("Aggravated Assault Locations in Boston, Massachusetts ")+xlab("Longitude")+ylab("Latitude")+labs(colour= "Day")+theme_void(base_size = 14)
+
+##view map
+CrimeMap
+
+##add animation based on day of the week 
+anim <- CrimeMap + 
+  transition_states(DAY_OF_WEEK,
+                    transition_length = 2,
+                    state_length = 1)
+##show animation 
+anim
+
+
 
 
 
@@ -67,4 +108,3 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
->>>>>>> fcc72f84c6ff6674c2e069d5d41aafd2d76a0680
