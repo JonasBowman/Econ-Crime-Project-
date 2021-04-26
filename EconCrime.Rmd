@@ -6,6 +6,56 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+
+## initial code to rbind the datasets
+
 knitr::opts_chunk$set(echo = TRUE)
+
+library(pacman)
+p_load(readr, tidyverse)
+
+crime2021 = read_csv("CrimeData-2021.csv")
+
+
+crime2020 = read_csv("CrimeData-2020.csv")
+
+total1 = rbind(crime2021,crime2020)
+
+total1 = total1%>% as.Date(OccurDate, ymd)
+
+
+total1<- total1%>% mutate(date = as.Date.character(total1$OccurDate, format = "%m/%d/%Y")) 
+
+month = months(Date)
+
+
+
+
 ```
 
+<<<<<<< HEAD
+=======
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+>>>>>>> fcc72f84c6ff6674c2e069d5d41aafd2d76a0680
