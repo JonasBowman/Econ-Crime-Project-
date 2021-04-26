@@ -19,14 +19,15 @@ crime2021 = read_csv("CrimeData-2021.csv")
 
 crime2020 = read_csv("CrimeData-2020.csv")
 
+
 total1 = rbind(crime2021,crime2020)
 
-total1 = total1%>% as.Date(OccurDate, ymd)
-
+#total1 = total1%>% as.Date(OccurDate, ymd)
 
 total1<- total1%>% mutate(date = as.Date.character(total1$OccurDate, format = "%m/%d/%Y")) 
 
-month = months(Date)
+
+month = months(total1$date)
 
 
 #create a seasons variable
@@ -38,7 +39,10 @@ total1 =total1%>%
       month %in%  4:6  ~ "Spring",
       TRUE ~ "Summer"))
 
-ggplot(aes(x=))
+glimpse(total1)
+
+
+ggplot(total1, aes(x=))
 
 
 
