@@ -6,8 +6,36 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+
+## initial code to rbind the datasets
+
 knitr::opts_chunk$set(echo = TRUE)
+
+library(pacman)
+p_load(readr, tidyverse)
+
+crime2021 = read_csv("CrimeData-2021.csv")
+
+
+crime2020 = read_csv("CrimeData-2020.csv")
+
+total1 = rbind(crime2021,crime2020)
+
+total1 = total1%>% as.Date(OccurDate, ymd)
+
+
+total1<- total1%>% mutate(date = as.Date.character(total1$OccurDate, format = "%m/%d/%Y")) 
+
+month = months(Date)
+
+
+
+
 ```
+
+
+
+
 
 ## R Markdown
 
