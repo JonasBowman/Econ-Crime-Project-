@@ -74,13 +74,17 @@ total1 =total1%>%
 #ggplot of all offenses by season
 
 offense_gg <- total1%>%ggplot(aes(y=OffenseCategory, fill=season))+geom_bar() +
-  xlab("Total Offenses") + ylab("Types of Offenses") + ggtitle("Total Offenses by Season, 2020-2021")
+  xlab("Total Offenses") + ylab("Types of Offenses") + ggtitle("Portland Total Offenses by Season, 2020-2021")
+
+offense_gg
 
 #ggplot of larceny offenses by season
 
 
 offenses_season <-total1%>%filter(OffenseCategory =="Larceny Offenses")%>%ggplot(aes(y=OffenseType, fill=season))+geom_bar() +
-  xlab("Total Larceny Offenses") + ylab("Types of Larceny Offenses") + ggtitle("Larceny by Season, 2020-2021")
+  xlab("Total Larceny Offenses") + ylab("Types of Larceny Offenses") + ggtitle("Portland Larceny by Season, 2020-2021")
+
+offenses_season
 
 
 #offense_gg <- total1%>%ggplot(aes(x=OffenseCategory))+geom_bar()
@@ -92,7 +96,7 @@ offenses_season <-total1%>%filter(OffenseCategory =="Larceny Offenses")%>%ggplot
 ## Adding an animated plot
 
 
-```{r animation}
+```{r animation, include=FALSE}
 
 ##register the google key
 register_google(key = "AIzaSyC1NOad5gjBYnTG_vOiV8XmmuMJpJ51W48")
@@ -101,18 +105,18 @@ register_google(key = "AIzaSyC1NOad5gjBYnTG_vOiV8XmmuMJpJ51W48")
 portlandmap= get_googlemap("portland oregon", zoom = 14) %>% ggmap()
 
 ##graph aggravated assaults by location in Boston
-CrimeMap = portland +geom_point(aes(x = Long, y = Lat, colour = season, size= HOUR), data=assault_data)+ggtitle("Aggravated Assault Locations in Boston, Massachusetts ")+xlab("Longitude")+ylab("Latitude")+labs(colour= "Day")+theme_void(base_size = 14)
+#CrimeMap = portland +geom_point(aes(x = Long, y = Lat, colour = season, size= HOUR), data=assault_data)+ggtitle("Aggravated Assault Locations in Boston, Massachusetts ")+xlab("Longitude")+ylab("Latitude")+labs(colour= "Day")+theme_void(base_size = 14)
 
 ##view map
-CrimeMap
+#CrimeMap
 
 ##add animation based on day of the week 
-anim <- CrimeMap + 
-  transition_states(DAY_OF_WEEK,
-                    transition_length = 2,
-                    state_length = 1)
+#anim <- CrimeMap + 
+  #transition_states(DAY_OF_WEEK,
+                    #transition_length = 2,
+                    #state_length = 1)
 ##show animation 
-anim
+#anim
 
 
 
