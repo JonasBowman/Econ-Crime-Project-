@@ -87,10 +87,77 @@ offenses_season <-total1%>%filter(OffenseCategory =="Larceny Offenses")%>%ggplot
 offenses_season
 
 
+
+##create year and year month variables 
+
+total1 = total1%>%mutate(yr = format(date,"%Y"))
+
+total1 = total1%>%mutate(yr_mth = format(date,"%Y-%m"))
+
+
 #offense_gg <- total1%>%ggplot(aes(x=OffenseCategory))+geom_bar()
 
 #offenses_season <-total1%>%filter(OffenseCategory =="Assault Offenses")%>%ggplot(aes(x=season))+geom_bar()
 
+
+##create downtown crime dataset
+downtown_crime = total1%>%filter(Neighborhood=="Downtown", yr>="2019") 
+
+
+downtown_crime =downtown_crime%>%
+  group_by(date)%>%
+  mutate(total = sum(OffenseCount, na.rm=TRUE))
+  
+  
+
+
+##graph that shows the large increae in property crime downtown in summer 2020
+  downtown_crime%>%filter(yr=="2020")%>%ggplot(aes(x=date, y=total))+
+  geom_line()+theme_minimal()+scale_y_continuous()
+  
+   downtown_crime%>%filter(yr=="2020" & OffenseCategory=="Vandalism")%>%ggplot(aes(x=date, y=total))+
+  geom_line()+theme_minimal()+scale_y_continuous()
+  
+  
+  
+  
+
+   
+   
+total1%>%group_by(date)%>%
+  mutate(total = sum(OffenseCount, na.rm=TRUE))%>%
+  filter(yr=="2020")%>%ggplot(aes(x=date, y=total, color=CrimeAgainst))+
+  geom_line()+theme_minimal()+scale_y_continuous()+
+  labs(title="Arrests by Date", x="Date", y="Arrests")
+
+
+
+society_crimes = total1%>%filter(CrimeAgainst=="Society")
+
+society_crimes%>%group_by(OffenseType)%>%summarise(total = sum(OffenseCount, na.rm = TRUE)ggplot(aes(x=yr_mth ,y=total, fill=OffenseType))+geom_line()+theme_minimal()
+
+
+
+
+
+total1%>%group_by(date)%>%filter(CrimeAgainst=="Property")%>%
+  mutate(total = sum(OffenseCount, na.rm=TRUE))%>%
+  filter(yr=="2020")%>%ggplot(aes(x=date, y=total))+
+  geom_line(color="darkgreen")+theme_minimal()+scale_y_continuous()+
+  labs(title="Personal Arrests by Date", x="Date", y="Arrests")
+
+
+
+
+
+total1%>%group_by(date)%>%
+  mutate(total = sum(OffenseCount, na.rm=TRUE))%>%
+  filter(yr=="2020")%>%ggplot(aes(x=date, y=total))+
+  geom_line(color="red")+theme_minimal()+scale_y_continuous()+
+  labs(title="Total Arrests by Date", x="Date", y="Arrests")
+
+
+  
 ```
 
 ## Adding an animated plot
