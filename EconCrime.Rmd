@@ -14,7 +14,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(pacman)
-p_load(readr, tidyverse, ggmap, devtools)
+p_load(readr, tidyverse, ggmap, devtools, scales, broom)
 ```
 
 
@@ -25,13 +25,20 @@ crime2021 = read_csv("CrimeData-2021.csv")
 
 
 crime2020 = read_csv("CrimeData-2020.csv")
+
+
+crime2019 = read_csv("CrimeData-2019.csv")
 ```
 
 ## Merge the two datasets
 
 ```{r bind}
 
-total1 = rbind(crime2021,crime2020)
+crime2019 = crime2019 %>% select(-c(OpenDataX, OpenDataY))
+
+#total1 = rbind(crime2021,crime2020)
+
+total1 = rbind(crime2021,crime2020, crime2019)
 
 ```
 
@@ -64,6 +71,7 @@ total1 =total1%>%
       month %in%  4:6  ~ "Spring",
       TRUE ~ "Summer"))
 
+view(total1)
 ```
 
 ## GGplots of all offenses and only larceny offenses
@@ -74,7 +82,7 @@ total1 =total1%>%
 #ggplot of all offenses by season
 
 offense_gg <- total1%>%ggplot(aes(y=OffenseCategory, fill=season))+geom_bar() +
-  xlab("Total Offenses") + ylab("Types of Offenses") + ggtitle("Portland Total Offenses by Season, 2020-2021")
+  xlab("Total Offenses") + ylab("Types of Offenses") + ggtitle("Portland Total Offenses by Season, 2019-2021")
 
 offense_gg
 
@@ -82,7 +90,7 @@ offense_gg
 
 
 offenses_season <-total1%>%filter(OffenseCategory =="Larceny Offenses")%>%ggplot(aes(y=OffenseType, fill=season))+geom_bar() +
-  xlab("Total Larceny Offenses") + ylab("Types of Larceny Offenses") + ggtitle("Portland Larceny by Season, 2020-2021")
+  xlab("Total Larceny Offenses") + ylab("Types of Larceny Offenses") + ggtitle("Portland Larceny by Season, 2019-2021")
 
 offenses_season
 
@@ -119,6 +127,56 @@ portlandmap= get_googlemap("portland oregon", zoom = 14) %>% ggmap()
 #anim
 
 
+
+```
+
+## COVID and Crime
+
+```{r rd}
+covid_data = filter(total1, between(date, as.Date("2019-03-15"), as.Date("2021-03-15")))
+
+covid_data$crime_count <- ave(as.numeric(covid_data[[1]]), covid_data[["date"]] ,
+                                                     FUN=length)
+
+cov_plot <- ggplot(covid_data, aes(date, crime_count)) + 
+  geom_point(colour = "firebrick", size = 2, alpha = 1/5) +
+  geom_vline(xintercept=as.numeric(as.Date("2020-03-15")), linetype = "longdash") + 
+  geom_smooth() + 
+  xlab("March 2019 to March 2021") +
+  ylab("Crimes per Day") +
+  scale_color_discrete(name = "COVID-19 in Portland",
+                       breaks = as.numeric(as.Date(c("2020-03-15", "2020-03-16"))), labels = c("Pre-COVID", "COVID"))
+
+cov_plot
+
+```
+
+```{r covid}
+
+precovid = filter(total1, between(date, as.Date("2019-03-15"), as.Date("2020-03-15")))
+
+covid = filter(total1, between(date, as.Date("2020-03-16"), as.Date("2021-03-16")))
+
+
+precovid$crime_count <- ave(as.numeric(precovid[[1]]), precovid[["OccurDate"]] ,
+                                                     FUN=length)
+
+covid$crime_count <- ave(as.numeric(covid[[1]]), covid[["OccurDate"]] ,
+                                                     FUN=length)
+
+options(ggplot2.continuous.colour="viridis")
+
+
+precovid_plot <- precovid %>% ggplot(aes(x=date, y=crime_count, fill=CrimeAgainst)) + geom_col() +
+  xlab("One Year Pre-COVID") + ylab("Pre-COVID Daily Number of Offenses") + ggtitle("Pre-COVID Portland Total Offenses, Mar 15, 2019 - Mar 15, 2020") 
+
+precovid_plot 
+
+
+covid_plot <- covid %>% ggplot(aes(x=date, y=crime_count, fill=CrimeAgainst)) + geom_col() +
+  xlab("One Year COVID") + ylab("COVID Daily Number of Offenses") + ggtitle("COVID Portland Total Offenses, Mar 16, 2020 - Mar 16, 2021") 
+
+covid_plot 
 
 ```
 
