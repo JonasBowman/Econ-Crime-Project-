@@ -125,8 +125,17 @@ downtown_crime =downtown_crime%>%
   
 downtown_crime_vandal <- downtown_crime %>% filter(OffenseCategory=="Vandalism") %>% mutate(total=sum(OffenseCount, na.rm=TRUE))
 
+
+dates_vline <- as.Date(c("2020-5-29"))         
+dates_vline <- which(downtown_crime_vandal$date %in% dates_vline)
+
+
+
+
 downtown_crime_vandal%>%filter(yr=="2020")%>%ggplot(aes(x=date, y=total))+
-  geom_line()+theme_minimal()+scale_y_continuous()
+  geom_line()+theme_minimal()+scale_y_continuous()+geom_vline(xintercept=as.numeric(downtown_crime_vandal$date[dates_vline]),
+             col = "red", lwd = 2, alpha =.3)+ geom_smooth(method = "loess", se=F)+
+  labs(title="Crime Downtown", x="Date", y="Count")
   
   # I noticed that the filter(Offensecategory was not working because youhave to )
   
@@ -197,34 +206,8 @@ not_downtown_crime_vandal%>%filter(yr=="2020")%>%ggplot(aes(x=date, y=total))+
 
 
 ```
-## Adding an animated plot
 
 
-```{r animation, include=FALSE}
-
-##register the google key
-register_google(key = "AIzaSyC1NOad5gjBYnTG_vOiV8XmmuMJpJ51W48")
-
-##acquire map of boston from google
-portlandmap= get_googlemap("portland oregon", zoom = 14) %>% ggmap()
-
-##graph aggravated assaults by location in Boston
-#CrimeMap = portland +geom_point(aes(x = Long, y = Lat, colour = season, size= HOUR), data=assault_data)+ggtitle("Aggravated Assault Locations in Boston, Massachusetts ")+xlab("Longitude")+ylab("Latitude")+labs(colour= "Day")+theme_void(base_size = 14)
-
-##view map
-#CrimeMap
-
-##add animation based on day of the week 
-#anim <- CrimeMap + 
-  #transition_states(DAY_OF_WEEK,
-                    #transition_length = 2,
-                    #state_length = 1)
-##show animation 
-#anim
-
-
-
-```
 
 ## COVID and Crime
 
