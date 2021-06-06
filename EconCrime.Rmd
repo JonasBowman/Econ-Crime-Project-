@@ -34,7 +34,7 @@ crime2019 = read_csv("CrimeData-2019.csv")
 
 ```{r bind}
 
-#crime2019 = crime2019 %>% select(-c(OpenDataX, OpenDataY))
+crime2019 = crime2019 %>% select(-c(OpenDataX, OpenDataY))
 
 #total1 = rbind(crime2021,crime2020)
 
@@ -248,10 +248,21 @@ cov_plot2
 
 ```{r covid}
 
-cov19 = lm(crime_count ~ pandemic, covid_data)
+covid_data1 <- covid_data %>% filter(pandemic=="Pre")
 
+covid_data2 <- covid_data %>% filter(pandemic=="Peri")
 
-stargazer(cov19, type="text")
+cov_reg1 = lm(crime_count ~ season, covid_data1)
+
+cov_reg2 = lm(crime_count ~ season, covid_data2)
+
+stargazer(cov_reg1, keep.stat = c("n", "rsq"), model.numbers = FALSE,
+          covariate.labels = c("Spring", "Summer", "Winter"),
+          dep.var.labels = c("Daily Crime Counts"), type = "text", style = "qje")
+
+stargazer(cov_reg2, keep.stat = c("n", "rsq"), model.numbers = FALSE,
+          covariate.labels = c("Spring", "Summer", "Winter"),
+          dep.var.labels = c("Daily Crime Counts"), type = "text", style = "qje")
 
 ```
 
